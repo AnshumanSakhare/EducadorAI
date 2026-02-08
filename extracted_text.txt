@@ -1,0 +1,75 @@
+Problem-solving● Solving Problems by Searching, Problem-
+Solving Agents, Example Problems, Search 
+Algorithms,
+● Uninformed Search Strategies, Informed 
+(Heuristic) Search Strategies, Heuristic 
+Functions, Search in Complex Environments, 
+Local Search and Optimization Problems.What is Problem Solving????
+● Problem Solving:
+● It is the process of identifying a goal, analyzing 
+the current situation, and taking steps to bridge 
+the gap between the two by finding an effective 
+solution.
+Problem Solving is the ability of an intelligent 
+agent to find a sequence of actions to achieve a 
+goal.● In AI, problem solving involves 
+● designing algorithms or systems:
+● That can think logically, evaluate options, and 
+make decisions to achieve a specific goal.
+● For example: Planning a trip, solving a puzzle, 
+or finding the shortest path to a destination are 
+all problem-solving tasks.● Example: Planning a Family Trip
+● Imagine we want to plan a family trip to the 
+beach. 
+● Let's use the four aspects to analyze the 
+problem:● 1. What is the explicit goal of the problem?
+● This is the clear and specific objective we are 
+trying to achieve.
+● For our example:
+● The goal is to reach the beach and enjoy a 
+relaxing day with family.2. What is the implicit criteria for success?
+● These are the hidden or secondary goals that 
+ensure the solution is successful.
+● For our example:
+● Everyone in the family should have a good 
+time.
+●     Reach the beach safely and on time.
+●     Minimize expenses and avoid stress.3. What is the initial situation?
+● This is the starting point or the current state of 
+the problem.
+● For our example:
+● You and your family are at home.
+● You have a car but need to decide on the route, 
+budget, and items to pack.4. Ability to perform
+● This involves the resources, actions, and 
+strategies available to achieve the goal.
+● For our example:
+● Resources: A car, money for fuel, and food.
+● Actions: Driving to the beach, packing 
+essentials, planning activities.
+● Strategies: Using GPS for the shortest route, 
+checking the weather forecast, and making a 
+list of items to carry.How This Relates to AI
+● In AI, solving problems is similar:
+●  Explicit goals: Represented as the desired 
+outcome in a problem space.
+●     Implicit criteria: AI algorithms consider 
+constraints like cost, time, or optimization.
+●     Initial state: The starting point of the system 
+(input data or environment).
+●     Ability to perform: The actions or operations 
+AI can take, such as searching, planning, or 
+learning.● AI uses 
+● search algorithms, 
+● heuristics, 
+● and decision-making techniques to solve 
+problems in ways similar to how we plan a trip.Introduction
+● The 8 Queens Problem is a classic AI problem: 
+Place 8 queens on a chessboard so that no two 
+queens attack each other. This means:
+● No two queens can share the same row, 
+column, or diagonal.
+● AI uses problem formulation to represent and 
+solve this.● There are two types of formulations: 
+● 1.Incremental formulations:
+● 2.Complete State formulations.
