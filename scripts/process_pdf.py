@@ -12,7 +12,7 @@ def extract_text_from_pdf(url):
         
         # Create a temporary file to save the PDF. This is safer for serverless envs.
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_f:
-            f.write(response.content)
+            temp_f.write(response.content)
             temp_pdf_path = temp_f.name
         
         try:

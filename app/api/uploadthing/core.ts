@@ -1,10 +1,42 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import sql from "@/lib/db";
+import { spawn } from "child_process";
  
 const f = createUploadthing();
  
 const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
  
+function processPdf(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const pythonProcess = spawn('python3', ['scripts/process_pdf.py', url]);
+
+    let extractedText = '';
+    let errorData = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+      extractedText += data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(`stderr: ${data}`);
+      errorData += data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+      if (code === 0) {
+        resolve(extractedText);
+      } else {
+        reject(new Error(`Python script failed with code ${code}. Stderr: ${errorData}`));
+      }
+    });
+
+    pythonProcess.on('error', (err) => {
+      reject(err);
+    });
+  });
+}
+
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
@@ -24,38 +56,8 @@ export const ourFileRouter = {
       // This code RUNS ON YOUR SERVER after upload
       console.log("Upload complete for userId:", metadata.userId);
       console.log("file url", file.ufsUrl);
-
-      const processPdf = () =>
-        new Promise<string>(async (resolve, reject) => {
-          const { spawn } = await import('child_process');
-          const pythonProcess = spawn('python3', ['scripts/process_pdf.py', file.ufsUrl]);
-          let extractedText = '';
-          pythonProcess.stdout.on('data', (data) => {
-            extractedText += data.toString();
-          });
-
-          let errorData = '';
-          pythonProcess.stderr.on('data', (data) => {
-            console.error(`stderr: ${data}`);
-            errorData += data.toString();
-          });
-
-          pythonProcess.on('close', (code) => {
-            console.log(`child process exited with code ${code}`);
-            if (code === 0) {
-              resolve(extractedText);
-            } else {
-              reject(new Error(`Python script failed with code ${code}. Stderr: ${errorData}`));
-            }
-          });
-
-          pythonProcess.on('error', (err) => {
-            reject(err);
-          });
-        });
-
       try {
-        const extractedText = await processPdf();
+        const extractedText = await processPdf(file.ufsUrl);
         if (extractedText.trim().length > 0) {
           await sql`
             INSERT INTO Documents (file_name, text)
