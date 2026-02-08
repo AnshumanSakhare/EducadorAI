@@ -28,8 +28,7 @@ export const ourFileRouter = {
       const processPdf = () =>
         new Promise<string>(async (resolve, reject) => {
           const { spawn } = await import('child_process');
-          const pythonProcess = spawn('python', ['scripts/process_pdf.py', file.ufsUrl]);
-
+          const pythonProcess = spawn('python3', ['scripts/process_pdf.py', file.ufsUrl]);
           let extractedText = '';
           pythonProcess.stdout.on('data', (data) => {
             extractedText += data.toString();

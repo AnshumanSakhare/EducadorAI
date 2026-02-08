@@ -2,6 +2,7 @@ import sys
 import requests
 from langchain_community.document_loaders import PyPDFLoader
 import os
+import tempfile
 
 def extract_text_from_pdf(url):
     try:
@@ -9,31 +10,32 @@ def extract_text_from_pdf(url):
         response = requests.get(url)
         response.raise_for_status()  # Raise an exception for bad status codes
         
-        # Create a temporary file to save the PDF
-        temp_pdf_path = "temp.pdf"
-        with open(temp_pdf_path, "wb") as f:
+        # Create a temporary file to save the PDF. This is safer for serverless envs.
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_f:
             f.write(response.content)
+            temp_pdf_path = temp_f.name
         
-        # Load the PDF and extract text
-        loader = PyPDFLoader(temp_pdf_path)
-        documents = loader.load()
-        text = ""
-        for doc in documents:
-            text += doc.page_content
-        
-        # Clean up the temporary file
-        os.remove(temp_pdf_path)
+        try:
+            # Load the PDF and extract text
+            loader = PyPDFLoader(temp_pdf_path)
+            documents = loader.load()
+            text = "".join(doc.page_content for doc in documents)
+        finally:
+            # Clean up the temporary file
+            os.remove(temp_pdf_path)
         
         return text
     except Exception as e:
-        return f"Error: {e}"
+        # Print error to stderr and exit, so Node.js can catch it.
+        print(f"Error in Python script: {e}", file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         pdf_url = sys.argv[1]
         extracted_text = extract_text_from_pdf(pdf_url)
-        # Save extracted text to a file in UTF-8
-        with open("extracted_text.txt", "w", encoding="utf-8") as out_f:
-            out_f.write(extracted_text)
+        # Print extracted text to stdout for Node.js to capture
+        print(extracted_text)
     else:
-        print("Please provide a URL to a PDF file.")
+        print("Error: No PDF URL provided to Python script.", file=sys.stderr)
+        sys.exit(1)
