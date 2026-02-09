@@ -16,7 +16,7 @@ async function processPdf(url: string): Promise<string> {
   const dataBuffer = Buffer.from(arrayBuffer);
 
   const { text } = await extractText(dataBuffer);
-  return text ?? "";
+  return text.join('\n') ?? "";
 }
 
 // FileRouter for your app, can contain multiple FileRoutes
