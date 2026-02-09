@@ -1,6 +1,6 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import sql from "@/lib/db";
-import pdfParse from "pdf-parse/lib/pdf-parse.js";
+import { extractText } from "unpdf";
  
 const f = createUploadthing();
  
@@ -15,8 +15,8 @@ async function processPdf(url: string): Promise<string> {
   const arrayBuffer = await res.arrayBuffer();
   const dataBuffer = Buffer.from(arrayBuffer);
 
-  const parsed = await pdfParse(dataBuffer);
-  return parsed.text ?? "";
+  const { text } = await extractText(dataBuffer);
+  return text ?? "";
 }
 
 // FileRouter for your app, can contain multiple FileRoutes
