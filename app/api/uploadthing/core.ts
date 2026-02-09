@@ -13,9 +13,9 @@ async function processPdf(url: string): Promise<string> {
   }
 
   const arrayBuffer = await res.arrayBuffer();
-  const dataBuffer = Buffer.from(arrayBuffer);
+  const dataArray = new Uint8Array(arrayBuffer);
 
-  const { text } = await extractText(dataBuffer);
+  const { text } = await extractText(dataArray);
   return text.join('\n') ?? "";
 }
 
