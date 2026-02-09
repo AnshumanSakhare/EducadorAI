@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NavLink from "@/components/ui/common/nav-link";
@@ -12,12 +12,8 @@ export default function Header() {
   const { isSignedIn } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    if (pathname === "/sign-in" || pathname === "/sign-up") {
-      setShowAuthModal(false);
-    }
-  }, [pathname]);
+  const isAuthPage = pathname === "/sign-in" || pathname === "/sign-up";
+  const shouldShowAuthModal = showAuthModal && !isAuthPage;
 
   const handleUploadClick = () => {
     if (!isSignedIn) {
@@ -72,7 +68,7 @@ export default function Header() {
         </div>
       </nav>
 
-      {showAuthModal && (
+      {shouldShowAuthModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-950 border border-rose-500/70 shadow-xl shadow-rose-500/30 p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">

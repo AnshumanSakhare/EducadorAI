@@ -5,7 +5,6 @@ import BgGradient from "@/components/ui/common/bg-gradient";
 import { Button } from "@/components/ui/button";
 import { useState, useRef } from "react";
 import { useUploadThing } from "@/lib/uploadthing";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 export default function Page() {
   const [file, setFile] = useState<File | null>(null);
@@ -31,7 +30,6 @@ export default function Page() {
         setKeyTerms([]);
         setQna([]);
         setQnaText(null);
-        const fileUrl = res[0].url;
         const fileName = res[0].name;
 
         try {
@@ -123,7 +121,7 @@ export default function Page() {
             </Badge>
           </div>
 
-          <h1 className="font-bold text-4xl mb-5 mt-5">Start Uploading Your PDF's</h1>
+          <h1 className="font-bold text-4xl mb-5 mt-5">Start Uploading Your PDFs</h1>
           <p className=" text-2xl mb-5">
             Upload your PDF and let our AI do the magic! ✨
           </p>

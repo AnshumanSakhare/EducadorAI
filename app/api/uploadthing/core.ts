@@ -1,40 +1,22 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import sql from "@/lib/db";
-import { spawn } from "child_process";
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
  
 const f = createUploadthing();
  
-const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
+const auth = () => ({ id: "fakeId" }); // Fake auth function
  
-function processPdf(url: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const pythonProcess = spawn('python3', ['scripts/process_pdf.py', url]);
+async function processPdf(url: string): Promise<string> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Failed to download PDF (${res.status} ${res.statusText})`);
+  }
 
-    let extractedText = '';
-    let errorData = '';
+  const arrayBuffer = await res.arrayBuffer();
+  const dataBuffer = Buffer.from(arrayBuffer);
 
-    pythonProcess.stdout.on('data', (data) => {
-      extractedText += data.toString();
-    });
-
-    pythonProcess.stderr.on('data', (data) => {
-      console.error(`stderr: ${data}`);
-      errorData += data.toString();
-    });
-
-    pythonProcess.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-      if (code === 0) {
-        resolve(extractedText);
-      } else {
-        reject(new Error(`Python script failed with code ${code}. Stderr: ${errorData}`));
-      }
-    });
-
-    pythonProcess.on('error', (err) => {
-      reject(err);
-    });
-  });
+  const parsed = await pdfParse(dataBuffer);
+  return parsed.text ?? "";
 }
 
 // FileRouter for your app, can contain multiple FileRoutes
@@ -42,9 +24,9 @@ export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   pdfUploader: f({ pdf: { maxFileSize: "16MB" } })
     // Set permissions and file types for this FileRoute
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       // This code runs on your server before upload
-      const user = await auth(req);
+      const user = await auth();
  
       // If you throw, the user will not be able to upload
       if (!user) throw new Error("Unauthorized");

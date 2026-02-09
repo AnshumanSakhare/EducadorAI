@@ -20,14 +20,7 @@ export async function POST(req: NextRequest) {
     if (action === 'analyze') {
       if (fileName) {
         const sql = (await import('@/lib/db')).default;
-        await sql`
-          CREATE TABLE IF NOT EXISTS Analyses (
-            id SERIAL PRIMARY KEY,
-            file_name TEXT NOT NULL,
-            data JSONB NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-          );
-        `;
+
         const existing = await sql`
           SELECT data FROM Analyses
           WHERE file_name = ${fileName}
